@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Login</h1>
+    <p style="color:rgb(238, 7, 7);" class="message"></p>
+
+    <form class="form" method="POST">
+        <!-- name: <input name="name" type="text"> <br> -->
+        email: <input class="email" name="email" type="email" required> <br>
+        password: <input class="password" name="password" type="password" required> <br>
+
+        <input type="submit" value="submit">
+    </form>
+ 
+    <script>
+
+
+
+        const form1 = document.querySelector('.form');
+        form1.addEventListener('submit', event => {
+            event.preventDefault(); //to  the form submit of action to go to another field 
+            const formData = new FormData(form1);
+            const data = Object.fromEntries(formData);
+
+            fetch('http://127.0.0.1:8000/api/auth/loginUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    // console.log(data)
+
+                    // console.log(data.error)
+                    if (data.error) {
+                        const message = document.querySelector('.message')
+                        message.textContent = data.error;
+                        setTimeout(() => {
+                            message.textContent = ""
+                        }, 4000)
+                    }
+
+                    // console.log(data.access_token)
+
+                    localStorage.setItem('bearer_token', JSON.stringify(data.access_token));
+
+                    console.log(JSON.parse(localStorage.getItem('bearer_token')));
+
+                    window.location.href = "/dashboard.html";
+
+
+                })
+                .catch(error => console.log(error));
+
+        });
+    </script>
+</body>
+
+</html>

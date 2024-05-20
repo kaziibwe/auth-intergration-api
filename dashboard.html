@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1> Your Dashboard</h1>
+    <h2> Welcome to your dashboard</h2>
+    <a href="profile.html"><button>Profile</button></a>
+    <a href=""><button>update</button></a>
+    <a href=""><button>update</button></a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+
+                <th>name</th>
+                <th>email</th>
+                <th>phone</th>
+                <th>manage</th>
+
+            </tr>
+        </thead>
+        <tbody id="tableRows">
+
+        </tbody>
+    </table>
+    <script src="constants.js"></script>
+    <script>
+
+        console.log(auth_token);
+        const loadTable = () => {
+
+
+            fetch('http://127.0.0.1:8000/api/auth/usersshow', {
+                headers: {
+                    'Authorization': `Bearer ${auth_token}` // Include the token in the Authorization header
+                }
+            })
+                .then(res => {
+                    return res.json();
+                })
+                .then(data => {
+                    let rows = '';
+                    let sn = 1;
+                    data.results.forEach(user => {
+                        // console.log(user)
+
+                        rows += `<tr><td>${sn++}</td><td>${user.name}</td><td>${user.email}</td><td>${user.phone}</td><td><button onclick='deleteItem(${user.id});' >delete</button></td></tr>`;
+                    });
+                    document.querySelector('#tableRows').innerHTML = rows;
+
+                }).catch(err => console.log(err));
+
+        }
+        loadTable();
+
+        const deleteItem = (id) => {
+            // console.log(id);
+            if (confirm('Are you sure you want to delete this item?')) {
+                fetch(`http://127.0.0.1:8000/api/usersdelete/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(res => res.json())
+                    .then(data => {
+                        console.log(data);
+                        loadTable();
+                    }
+
+                    )
+                    .catch(err => console.log(err));
+
+
+            }
+        }
+
+
+
+    </script>
+</body>
+
+</html>

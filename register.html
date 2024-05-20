@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>register</h1>
+    <p style="color:rgb(100, 100, 192);" class="message" ></p>
+    <form class="form" method="POST">
+        <!-- name: <input name="name" type="text"> <br> -->
+        email: <input class="email" name="email" type="email" required> <br>
+        name: <input class="name" name="name" type="text" required>
+        <br>
+        phone: <input class="phone" name="phone" type="text" required> <br>
+        password: <input class="password" name="password" type="password" required> <br>
+
+        <input type="submit" value="submit">
+    </form>
+    <script>
+
+// console.log(JSON.parse(localStorage.getItem('bearer_token')));  
+
+        const messageRegister = () => {
+            const message = document.querySelector('.message')
+            document.querySelector('.email').value = "";
+            document.querySelector('.name').value = "";
+            document.querySelector('.phone').value = "";
+            document.querySelector('.password').value = "";
+            message.textContent = 'Registration Successfull'
+            setTimeout(() => {
+                message.textContent = ""
+            }, 4000)
+        }
+
+        const form1 = document.querySelector('.form');
+        form1.addEventListener('submit', event => {
+            event.preventDefault(); //to  the form submit of action to go to another field 
+            const formData = new FormData(form1);
+            // const data =new URLSearchParams(formData);
+            const data = Object.fromEntries(formData);
+            // console.log(formData.get('email'));
+            // console.log(formData.get('role'));
+            // console.log(formData.get('age'));
+
+            // console.log(JSON.stringify(data));
+
+            // http://localhost/php-rest-api/api/create.php
+
+            fetch('http://127.0.0.1:8000/api/auth/registerUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data)
+
+                    messageRegister();
+                })
+                .catch(error => console.log(error));
+
+        });
+    </script>
+</body>
+
+</html>
